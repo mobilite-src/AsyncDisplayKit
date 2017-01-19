@@ -10,8 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol ASSupplementaryNodeSource;
-
+/**
+ * A protocol that your section controllers should conform to,
+ * in addition to IGListSectionType, in order to be used with AsyncDisplayKit.
+ *
+ * @note Your supplementary view source should conform to @c ASSupplementaryNodeSource.
+ */
 @protocol ASSectionController <NSObject>
 
 /**
@@ -25,8 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @see collectionNode:nodeBlockForItemAtIndexPath:
  */
 - (ASCellNodeBlock)nodeBlockForItemAtIndex:(NSInteger)index;
-
-@property (nonatomic, weak, readonly) id <ASSupplementaryNodeSource> supplementaryNodeSource;
 
 @optional
 

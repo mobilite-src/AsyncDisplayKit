@@ -10,19 +10,22 @@
 
 #import <IGListKit/IGListKit.h>
 
-@protocol ASListAdapter;
-
 NS_ASSUME_NONNULL_BEGIN
+
+@class ASCollectionNode;
 
 @interface IGListAdapter (AsyncDisplayKit)
 
 /**
- * An ASListAdapter that interfaces with this IGListAdapter.
+ * Connect this list adapter to the given collection node.
  *
- * You can assign this to your collection node's listAdapter property,
- * e.g. `self.collectionNode.listAdapter = self.listAdapter.as_dataAdapter;`
+ * @param collectionNode The collection node to drive with this list adapter.
+ *
+ * @note This method may only be called once per list adapter, 
+ *   and it must be called on the main thread. -[UIViewController init]
+ *   is a good place to call it.
  */
-@property (nonatomic, strong, readonly) id<ASCollectionDelegate, ASCollectionDataSource> as_dataSource;
+- (void)becomeDataSourceAndDelegateForCollectionNode:(ASCollectionNode *)collectionNode;
 
 @end
 

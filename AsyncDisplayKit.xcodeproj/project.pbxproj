@@ -463,7 +463,6 @@
 		CC8B05D81D73979700F54286 /* ASTextNodePerformanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8B05D71D73979700F54286 /* ASTextNodePerformanceTests.m */; };
 		CCA221D31D6FA7EF00AF6A0F /* ASViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA221D21D6FA7EF00AF6A0F /* ASViewControllerTests.m */; };
 		CCB2F34D1D63CCC6004E6DE9 /* ASDisplayNodeSnapshotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB2F34C1D63CCC6004E6DE9 /* ASDisplayNodeSnapshotTests.m */; };
-		CCE04B1C1E313E95006AEBBB /* ASListAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE04B1B1E313E95006AEBBB /* ASListAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCE04B1F1E313EA7006AEBBB /* ASSectionController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE04B1E1E313EA7006AEBBB /* ASSectionController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCE04B221E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE04B201E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.h */; };
 		CCE04B231E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE04B211E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.m */; };
@@ -472,7 +471,6 @@
 		CCE04B281E313ED6006AEBBB /* ASListAdapterImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE04B261E313ED6006AEBBB /* ASListAdapterImpl.m */; };
 		CCE04B291E313ED6006AEBBB /* ASListAdapterImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE04B261E313ED6006AEBBB /* ASListAdapterImpl.m */; };
 		CCE04B2C1E314A32006AEBBB /* ASSupplementaryNodeSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE04B2B1E314A32006AEBBB /* ASSupplementaryNodeSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CCE04B2D1E314A9C006AEBBB /* ASListAdapter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCE04B1B1E313E95006AEBBB /* ASListAdapter.h */; };
 		CCE04B2E1E314A9C006AEBBB /* ASSectionController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCE04B1E1E313EA7006AEBBB /* ASSectionController.h */; };
 		CCE04B2F1E314A9C006AEBBB /* ASSupplementaryNodeSource.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCE04B2B1E314A32006AEBBB /* ASSupplementaryNodeSource.h */; };
 		CCE04B301E314A9C006AEBBB /* IGListAdapter+AsyncDisplayKit.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCE04B201E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.h */; };
@@ -691,7 +689,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				CCE04B2D1E314A9C006AEBBB /* ASListAdapter.h in CopyFiles */,
 				CCE04B2E1E314A9C006AEBBB /* ASSectionController.h in CopyFiles */,
 				CCE04B2F1E314A9C006AEBBB /* ASSupplementaryNodeSource.h in CopyFiles */,
 				CCE04B301E314A9C006AEBBB /* IGListAdapter+AsyncDisplayKit.h in CopyFiles */,
@@ -1190,7 +1187,6 @@
 		CC8B05D71D73979700F54286 /* ASTextNodePerformanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASTextNodePerformanceTests.m; sourceTree = "<group>"; };
 		CCA221D21D6FA7EF00AF6A0F /* ASViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASViewControllerTests.m; sourceTree = "<group>"; };
 		CCB2F34C1D63CCC6004E6DE9 /* ASDisplayNodeSnapshotTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASDisplayNodeSnapshotTests.m; sourceTree = "<group>"; };
-		CCE04B1B1E313E95006AEBBB /* ASListAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASListAdapter.h; sourceTree = "<group>"; };
 		CCE04B1E1E313EA7006AEBBB /* ASSectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASSectionController.h; sourceTree = "<group>"; };
 		CCE04B201E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IGListAdapter+AsyncDisplayKit.h"; sourceTree = "<group>"; };
 		CCE04B211E313EB9006AEBBB /* IGListAdapter+AsyncDisplayKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IGListAdapter+AsyncDisplayKit.m"; sourceTree = "<group>"; };
@@ -1815,7 +1811,6 @@
 		CCE04B1D1E313E99006AEBBB /* Collection Data Adapter */ = {
 			isa = PBXGroup;
 			children = (
-				CCE04B1B1E313E95006AEBBB /* ASListAdapter.h */,
 				CCE04B1E1E313EA7006AEBBB /* ASSectionController.h */,
 				CCE04B2B1E314A32006AEBBB /* ASSupplementaryNodeSource.h */,
 				CCF92DCE1E315FC50019E9C6 /* IGListKit Support */,
@@ -2021,7 +2016,6 @@
 				DE040EF91C2B40AC004692FF /* ASCollectionViewFlowLayoutInspector.h in Headers */,
 				34EFC7701B701CFA00AD841F /* ASStackLayoutDefines.h in Headers */,
 				764D83D51C8EA515009B4FB8 /* AsyncDisplayKit+Debug.h in Headers */,
-				CCE04B1C1E313E95006AEBBB /* ASListAdapter.h in Headers */,
 				E5711A2C1C840C81009619D4 /* ASIndexedNodeContext.h in Headers */,
 				CC4C2A771D88E3BF0039ACAB /* ASTraceEvent.h in Headers */,
 				254C6B7B1BF94DF4003EC431 /* ASTextKitRenderer+Positioning.h in Headers */,

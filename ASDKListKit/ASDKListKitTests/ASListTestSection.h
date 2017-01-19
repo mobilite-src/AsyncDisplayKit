@@ -9,7 +9,7 @@
 #import <IGListKit/IGListKit.h>
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 
-@interface ASListTestSection : IGListSectionController <IGListSectionType, ASIGListSectionType>
+@interface ASListTestSection : IGListSectionController <IGListSectionType, ASSectionController>
 
 @property (nonatomic) NSInteger itemCount;
 

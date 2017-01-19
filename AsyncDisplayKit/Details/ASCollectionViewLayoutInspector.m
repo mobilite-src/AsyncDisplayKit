@@ -60,10 +60,6 @@ ASSizeRange NodeConstrainedSizeForScrollDirection(ASCollectionView *collectionVi
 
 - (ASSizeRange)collectionView:(ASCollectionView *)collectionView constrainedSizeForNodeAtIndexPath:(NSIndexPath *)indexPath
 {
-  id<ASListAdapter> adapter = collectionView.listAdapter;
-  if (adapter) {
-    return [[adapter sectionControllerForSection:indexPath.section] constrainedSizeForItemAtIndex:indexPath.item];
-  } else
   if (_delegateFlags.implementsConstrainedSizeForNodeAtIndexPath) {
     return [collectionView.asyncDelegate collectionNode:collectionView.collectionNode constrainedSizeForItemAtIndexPath:indexPath];
   } else if (_delegateFlags.implementsConstrainedSizeForNodeAtIndexPathDeprecated) {

@@ -52,7 +52,7 @@
                                          viewController:nil
                                        workingRangeSize:0];
   self.adapter.dataSource = self.dataSource;
-  self.collectionNode.listAdapter = [self.adapter as_dataAdapter];
+  [self.adapter becomeDataSourceAndDelegateForCollectionNode:self.collectionNode];
   XCTAssertNotNil(self.adapter.collectionView, @"Adapter was not bound to collection view. You may have a stale copy of AsyncDisplayKit that was built without IG_LIST_KIT. Clean Builder Folder IMO.");
 }
 
@@ -66,18 +66,6 @@
   self.adapter = nil;
   self.dataSource = nil;
   self.layout = nil;
-}
-
-- (void)test_whenSettingDataSource_thenSettingCollectionView_thatCellExists {
-  self.dataSource.objects = @[@1];
-  IGListAdapter *adapter = [[IGListAdapter alloc] initWithUpdater:[IGListReloadDataUpdater new]
-                                                   viewController:nil
-                                                 workingRangeSize:0];
-  adapter.dataSource = self.dataSource;
-  self.collectionNode.listAdapter = [adapter as_dataAdapter];
-  [self.collectionNode.view layoutIfNeeded];
-  [self.collectionNode waitUntilAllUpdatesAreCommitted];
-  XCTAssertNotNil([self.collectionNode cellForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]]);
 }
 
 - (void)test_whenAdapterUpdated_withObjectsOverflow_thatVisibleObjectsIsSubsetOfAllObjects {

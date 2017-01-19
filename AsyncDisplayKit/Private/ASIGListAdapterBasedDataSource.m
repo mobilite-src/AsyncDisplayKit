@@ -1,5 +1,5 @@
 //
-//  ASListAdapterImpl.m
+//  ASIGListAdapterBasedDataSource.m
 //  AsyncDisplayKit
 //
 //  Created by Adlai Holler on 1/19/17.
@@ -8,23 +8,28 @@
 
 #if IG_LIST_KIT
 
-#import "ASListAdapterImpl.h"
+#import "ASIGListAdapterBasedDataSource.h"
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import <objc/runtime.h>
 
-@interface ASListAdapterImpl () <UICollectionViewDelegateFlowLayout>
+typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSectionController;
+
+@protocol ASIGSupplementaryNodeSource <IGListSupplementaryViewSource, ASSupplementaryNodeSource>
+@end
+
+@interface ASIGListAdapterBasedDataSource () <UICollectionViewDelegateFlowLayout>
 @property (nonatomic, weak, readonly) IGListAdapter *listAdapter;
 @property (nonatomic, readonly) id<UICollectionViewDelegateFlowLayout> delegate;
 @property (nonatomic, readonly) id<UICollectionViewDataSource> dataSource;
 @end
 
-@implementation ASListAdapterImpl
+@implementation ASIGListAdapterBasedDataSource
 
 - (instancetype)initWithListAdapter:(IGListAdapter *)listAdapter
 {
   if (self = [super init]) {
-    [ASListAdapterImpl setASCollectionViewSuperclass];
-    [ASListAdapterImpl configureUpdater:listAdapter.updater];
+    [ASIGListAdapterBasedDataSource setASCollectionViewSuperclass];
+    [ASIGListAdapterBasedDataSource configureUpdater:listAdapter.updater];
 
     ASDisplayNodeAssert([listAdapter conformsToProtocol:@protocol(UICollectionViewDataSource)], @"Expected IGListAdapter to conform to UICollectionViewDataSource.");
     ASDisplayNodeAssert([listAdapter conformsToProtocol:@protocol(UICollectionViewDelegateFlowLayout)], @"Expected IGListAdapter to conform to UICollectionViewDelegateFlowLayout.");
@@ -87,6 +92,24 @@
   [self.delegate scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
 }
 
+- (BOOL)shouldBatchFetchForCollectionNode:(ASCollectionNode *)collectionNode
+{
+  NSInteger sectionCount = [self numberOfSectionsInCollectionNode:collectionNode];
+  if (sectionCount == 0) {
+    return NO;
+  }
+  return [[self sectionControllerForSection:sectionCount - 1] shouldBatchFetch];
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode willBeginBatchFetchWithContext:(ASBatchContext *)context
+{
+  NSInteger sectionCount = [self numberOfSectionsInCollectionNode:collectionNode];
+  if (sectionCount == 0) {
+    return;
+  }
+  return [[self sectionControllerForSection:sectionCount - 1] beginBatchFetchWithContext:context];
+}
+
 #pragma mark - UICollectionViewDelegateFlowLayout
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -143,15 +166,23 @@
 
 - (ASCellNode *)collectionNode:(ASCollectionNode *)collectionNode nodeForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-  return [[[self sectionControllerForSection:indexPath.section] supplementaryNodeSource] nodeForSupplementaryElementOfKind:kind atIndex:indexPath.item];
+  return [[self supplementaryElementSourceForSection:indexPath.section] nodeForSupplementaryElementOfKind:kind atIndex:indexPath.item];
 }
 
 #pragma mark - Helpers
 
-- (id<ASSectionController>)sectionControllerForSection:(NSInteger)section
+- (id<ASIGSupplementaryNodeSource>)supplementaryElementSourceForSection:(NSInteger)section
+{
+  ASIGSectionController *ctrl = [self sectionControllerForSection:section];
+  id<ASIGSupplementaryNodeSource> src = (id<ASIGSupplementaryNodeSource>)ctrl.supplementaryViewSource;
+  ASDisplayNodeAssert(src == nil || [src conformsToProtocol:@protocol(ASIGSupplementaryNodeSource)], @"Supplementary view source should conform to %@", NSStringFromProtocol(@protocol(ASIGSupplementaryNodeSource)));
+  return src;
+}
+
+- (ASIGSectionController *)sectionControllerForSection:(NSInteger)section
 {
   id object = [_listAdapter objectAtSection:section];
-  id<ASSectionController> ctrl = [_listAdapter sectionControllerForObject:object];
+  ASIGSectionController *ctrl = (ASIGSectionController *)[_listAdapter sectionControllerForObject:object];
   ASDisplayNodeAssert([ctrl conformsToProtocol:@protocol(ASSectionController)], @"Expected section controller to conform to %@. Controller: %@", NSStringFromProtocol(@protocol(ASSectionController)), ctrl);
   return ctrl;
 }

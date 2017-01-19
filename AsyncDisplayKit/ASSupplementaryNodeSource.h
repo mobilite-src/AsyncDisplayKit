@@ -13,11 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ASSupplementaryNodeSource <NSObject>
 
 /**
- *
- */
-- (NSArray<NSString *> *)supportedElementKinds;
-
-/**
  * A method to provide the node for the item at the given index.
  *
  * @param elementKind The kind of supplementary element.
