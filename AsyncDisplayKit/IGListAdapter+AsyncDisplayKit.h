@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  * You can assign this to your collection node's listAdapter property,
  * e.g. `self.collectionNode.listAdapter = self.listAdapter.as_dataAdapter;`
  */
-@property (nonatomic, strong, readonly) id<ASListAdapter> as_dataAdapter;
+@property (nonatomic, strong, readonly) id<ASCollectionDelegate, ASCollectionDataSource> as_dataSource;
 
 @end
 

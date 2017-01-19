@@ -15,11 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ASSectionController <NSObject>
 
 /**
- * Asks the section controller for the number of items it holds.
- */
-- (NSInteger)numberOfItems;
-
-/**
  * A method to provide the node block for the item at the given index.
  * The node block you return will be run asynchronously off the main thread,
  * so it's important to retrieve any objects from your section _outside_ the block

@@ -11,12 +11,15 @@
 #import <IGListKit/IGListKit.h>
 #import "ASListAdapter.h"
 
+@protocol ASCollectionDelegate;
+@protocol ASCollectionDataSource;
+
 /**
  * A default implementation of ASListAdapter, based on
  * IGListAdapter.
  */
 __attribute((objc_subclassing_restricted))
-@interface ASListAdapterImpl : NSObject <ASListAdapter>
+@interface ASListAdapterImpl : NSObject <ASCollectionDataSource, ASCollectionDelegate>
 
 - (instancetype)initWithIGListAdapter:(IGListAdapter *)listAdapter;
 

@@ -12,12 +12,13 @@
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import <objc/runtime.h>
 
-@interface ASListAdapterImpl ()
+@interface ASListAdapterImpl () <UICollectionViewDelegateFlowLayout>
 @property (nonatomic, weak, readonly) IGListAdapter *listAdapter;
+@property (nonatomic, readonly) id<UICollectionViewDelegateFlowLayout> delegate;
+@property (nonatomic, readonly) id<UICollectionViewDataSource> dataSource;
 @end
 
 @implementation ASListAdapterImpl
-@synthesize collectionNode = _collectionNode;
 
 - (instancetype)initWithListAdapter:(IGListAdapter *)listAdapter
 {
@@ -25,32 +26,135 @@
     [ASListAdapterImpl setASCollectionViewSuperclass];
     [ASListAdapterImpl configureUpdater:listAdapter.updater];
 
+    ASDisplayNodeAssert([listAdapter conformsToProtocol:@protocol(UICollectionViewDataSource)], @"Expected IGListAdapter to conform to UICollectionViewDataSource.");
+    ASDisplayNodeAssert([listAdapter conformsToProtocol:@protocol(UICollectionViewDelegateFlowLayout)], @"Expected IGListAdapter to conform to UICollectionViewDelegateFlowLayout.");
     _listAdapter = listAdapter;
   }
   return self;
 }
 
-#pragma mark - ASListAdapter
-
-- (void)setCollectionNode:(ASCollectionNode *)collectionNode
+- (id<UICollectionViewDataSource>)dataSource
 {
-  _collectionNode = collectionNode;
-  __weak IGListAdapter *listAdapter = _listAdapter;
-  [collectionNode onDidLoad:^(ASCollectionNode * _Nonnull collectionNode) {
-    listAdapter.collectionView = (IGListCollectionView *)collectionNode.view;
-  }];
+  return (id<UICollectionViewDataSource>)_listAdapter;
 }
 
-- (id<ASSectionController>)sectionControllerForSection:(NSInteger)section
+- (id<UICollectionViewDelegateFlowLayout>)delegate
 {
-  IGListAdapter *listAdapter = _listAdapter;
-  id object = [listAdapter objectAtSection:section];
-  id<ASSectionController> ctrl = [listAdapter sectionControllerForObject:object];
-  ASDisplayNodeAssert([ctrl conformsToProtocol:@protocol(ASSectionController)], @"Expected section controller to conform to %@. Controller: %@", NSStringFromProtocol(@protocol(ASSectionController)), ctrl);
-  return ctrl;
+  return (id<UICollectionViewDelegateFlowLayout>)_listAdapter;
+}
+
+#pragma mark - ASCollectionDelegate
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  [self.delegate collectionView:collectionNode.view didSelectItemAtIndexPath:indexPath];
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode willDisplayItemWithNode:(ASCellNode *)node
+{
+  UICollectionViewCell *cell = ASDynamicCast(node.view.superview.superview, UICollectionViewCell);
+  ASDisplayNodeAssertNotNil(cell, @"Expected cell node to be hosted in a cell!");
+  ASCollectionView *collectionView = collectionNode.view;
+  NSIndexPath *indexPath = [collectionView indexPathForNode:node];
+  if (cell && indexPath) {
+    [self.delegate collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
+  }
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode didEndDisplayingItemWithNode:(ASCellNode *)node
+{
+  UICollectionViewCell *cell = ASDynamicCast(node.view.superview.superview, UICollectionViewCell);
+  ASDisplayNodeAssertNotNil(cell, @"Expected cell node to be hosted in a cell!");
+  ASCollectionView *collectionView = collectionNode.view;
+  NSIndexPath *indexPath = [collectionView indexPathForNode:node];
+  if (cell && indexPath) {
+    [self.delegate collectionView:collectionView didEndDisplayingCell:cell forItemAtIndexPath:indexPath];
+  }
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+  [self.delegate scrollViewDidScroll:scrollView];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+  [self.delegate scrollViewWillBeginDragging:scrollView];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+  [self.delegate scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+}
+
+#pragma mark - UICollectionViewDelegateFlowLayout
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  return [self.delegate collectionView:collectionView layout:collectionViewLayout sizeForItemAtIndexPath:indexPath];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+  return [self.delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForHeaderInSection:section];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section
+{
+  return [self.delegate collectionView:collectionView layout:collectionViewLayout referenceSizeForFooterInSection:section];
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+  return [self.delegate collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:section];
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+{
+  return [self.delegate collectionView:collectionView layout:collectionViewLayout minimumLineSpacingForSectionAtIndex:section];
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+  return [self.delegate collectionView:collectionView layout:collectionViewLayout minimumInteritemSpacingForSectionAtIndex:section];
+}
+
+#pragma mark - ASCollectionDataSource
+
+- (NSInteger)collectionNode:(ASCollectionNode *)collectionNode numberOfItemsInSection:(NSInteger)section
+{
+  return [self.dataSource collectionView:collectionNode.view numberOfItemsInSection:section];
+}
+
+- (NSInteger)numberOfSectionsInCollectionNode:(ASCollectionNode *)collectionNode
+{
+  return [self.dataSource numberOfSectionsInCollectionView:collectionNode.view];
+}
+
+- (ASCellNodeBlock)collectionNode:(ASCollectionNode *)collectionNode nodeBlockForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  return [[self sectionControllerForSection:indexPath.section] nodeBlockForItemAtIndex:indexPath.item];
+}
+
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode constrainedSizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  return [[self sectionControllerForSection:indexPath.section] constrainedSizeForItemAtIndex:indexPath.item];
+}
+
+- (ASCellNode *)collectionNode:(ASCollectionNode *)collectionNode nodeForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+  return [[[self sectionControllerForSection:indexPath.section] supplementaryNodeSource] nodeForSupplementaryElementOfKind:kind atIndex:indexPath.item];
 }
 
 #pragma mark - Helpers
+
+- (id<ASSectionController>)sectionControllerForSection:(NSInteger)section
+{
+  id object = [_listAdapter objectAtSection:section];
+  id<ASSectionController> ctrl = [_listAdapter sectionControllerForObject:object];
+  ASDisplayNodeAssert([ctrl conformsToProtocol:@protocol(ASSectionController)], @"Expected section controller to conform to %@. Controller: %@", NSStringFromProtocol(@protocol(ASSectionController)), ctrl);
+  return ctrl;
+}
 
 /**
  * Set ASCollectionView's superclass to IGListCollectionView.
