@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (ASCellNode *)nodeForSupplementaryElementOfKind:(NSString *)elementKind atIndex:(NSInteger)index;
 
+@optional
+
 /**
  * A method to provide the constrained size used for measuring the supplementary
  * element of the given kind at the given index.

@@ -9,7 +9,7 @@
 #import <IGListKit/IGListKit.h>
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 
-@interface ASListTestSupplementarySource : NSObject <ASIGListSupplementaryViewSource>
+@interface ASListTestSupplementarySource : NSObject <IGListSupplementaryViewSource, ASSupplementaryNodeSource>
 
 @property (nonatomic, strong, readwrite) NSArray<NSString *> *supportedElementKinds;
 

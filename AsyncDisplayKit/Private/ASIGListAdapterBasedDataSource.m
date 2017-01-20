@@ -14,6 +14,20 @@
 
 typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSectionController;
 
+/// The optional methods that a class implements from ASSectionController.
+/// Note: Bitfields are not supported by NSValue so we can't use them.
+typedef struct {
+  BOOL constrainedSizeForItem;
+  BOOL shouldBatchFetch;
+  BOOL beginBatchFetchWithContext;
+} ASSectionControllerOverrides;
+
+/// The optional methods that a class implements from ASSupplementaryNodeSource.
+/// Note: Bitfields are not supported by NSValue so we can't use them.
+typedef struct {
+  BOOL constrainedSizeForSupplementary;
+} ASSupplementarySourceOverrides;
+
 @protocol ASIGSupplementaryNodeSource <IGListSupplementaryViewSource, ASSupplementaryNodeSource>
 @end
 
@@ -98,7 +112,15 @@ typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSect
   if (sectionCount == 0) {
     return NO;
   }
-  return [[self sectionControllerForSection:sectionCount - 1] shouldBatchFetch];
+
+  // If they implement shouldBatchFetch, call it. Otherwise, just say YES if they implement beginBatchFetch.
+  ASIGSectionController *ctrl = [self sectionControllerForSection:sectionCount - 1];
+  ASSectionControllerOverrides o = [ASIGListAdapterBasedDataSource overridesForSectionControllerClass:ctrl.class];
+  if (o.shouldBatchFetch) {
+    return [ctrl shouldBatchFetch];
+  } else {
+    return o.beginBatchFetchWithContext;
+  }
 }
 
 - (void)collectionNode:(ASCollectionNode *)collectionNode willBeginBatchFetchWithContext:(ASBatchContext *)context
@@ -107,7 +129,10 @@ typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSect
   if (sectionCount == 0) {
     return;
   }
-  return [[self sectionControllerForSection:sectionCount - 1] beginBatchFetchWithContext:context];
+  ASIGSectionController *ctrl = [self sectionControllerForSection:sectionCount - 1];
+  if ([ASIGListAdapterBasedDataSource overridesForSectionControllerClass:ctrl.class].beginBatchFetchWithContext) {
+    [ctrl beginBatchFetchWithContext:context];
+  }
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout
@@ -161,13 +186,19 @@ typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSect
 
 - (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode constrainedSizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  return [[self sectionControllerForSection:indexPath.section] constrainedSizeForItemAtIndex:indexPath.item];
+  ASIGSectionController *ctrl = [self sectionControllerForSection:indexPath.section];
+  if ([ASIGListAdapterBasedDataSource overridesForSectionControllerClass:ctrl.class].constrainedSizeForItem) {
+    return [ctrl constrainedSizeForItemAtIndex:indexPath.item];
+  } else {
+    return ASSizeRangeUnconstrained;
+  }
 }
 
 - (ASCellNode *)collectionNode:(ASCollectionNode *)collectionNode nodeForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
   return [[self supplementaryElementSourceForSection:indexPath.section] nodeForSupplementaryElementOfKind:kind atIndex:indexPath.item];
 }
+
 
 #pragma mark - Helpers
 
@@ -199,7 +230,7 @@ typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSect
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    class_setSuperclass([self class], [IGListCollectionView class]);
+    class_setSuperclass([ASCollectionView class], [IGListCollectionView class]);
   });
 #pragma clang diagnostic pop
 }
@@ -216,6 +247,46 @@ typedef IGListSectionController<IGListSectionType, ASSectionController> ASIGSect
       NSLog(@"WARNING: Use of non-%@ updater with AsyncDisplayKit is discouraged. Updater: %@", NSStringFromClass([IGListAdapterUpdater class]), updater);
     });
   }
+}
+
++ (ASSupplementarySourceOverrides)overridesForSupplementarySourceClass:(Class)c
+{
+  static NSCache<Class, NSValue *> *cache;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    cache = [[NSCache alloc] init];
+  });
+  NSValue *obj = [cache objectForKey:c];
+  ASSupplementarySourceOverrides o;
+  if (obj == nil) {
+    o.constrainedSizeForSupplementary = [c instancesRespondToSelector:@selector(constrainedSizeForSupplementaryElementOfKind:atIndex:)];
+    obj = [NSValue valueWithBytes:&o objCType:@encode(ASSupplementarySourceOverrides)];
+    [cache setObject:obj forKey:c];
+  } else {
+    [obj getValue:&o];
+  }
+  return o;
+}
+
++ (ASSectionControllerOverrides)overridesForSectionControllerClass:(Class)c
+{
+  static NSCache<Class, NSValue *> *cache;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    cache = [[NSCache alloc] init];
+  });
+  NSValue *obj = [cache objectForKey:c];
+  ASSectionControllerOverrides o;
+  if (obj == nil) {
+    o.constrainedSizeForItem = [c instancesRespondToSelector:@selector(constrainedSizeForItemAtIndex:)];
+    o.beginBatchFetchWithContext = [c instancesRespondToSelector:@selector(beginBatchFetchWithContext:)];
+    o.shouldBatchFetch = [c instancesRespondToSelector:@selector(shouldBatchFetch)];
+    obj = [NSValue valueWithBytes:&o objCType:@encode(ASSectionControllerOverrides)];
+    [cache setObject:obj forKey:c];
+  } else {
+    [obj getValue:&o];
+  }
+  return o;
 }
 
 @end

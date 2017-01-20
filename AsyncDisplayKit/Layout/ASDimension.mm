@@ -15,6 +15,7 @@
 #pragma mark - ASDimension
 
 ASDimension const ASDimensionAuto = {ASDimensionUnitAuto, 0};
+ASSizeRange const ASSizeRangeUnconstrained = ASSizeRangeMake(CGSizeZero, CGSizeMake(INFINITY, INFINITY));
 
 ASOVERLOADABLE ASDimension ASDimensionMake(NSString *dimension)
 {
