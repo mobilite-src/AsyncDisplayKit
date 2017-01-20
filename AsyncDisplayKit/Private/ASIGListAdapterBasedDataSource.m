@@ -69,28 +69,6 @@ typedef struct {
   [self.delegate collectionView:collectionNode.view didSelectItemAtIndexPath:indexPath];
 }
 
-- (void)collectionNode:(ASCollectionNode *)collectionNode willDisplayItemWithNode:(ASCellNode *)node
-{
-  UICollectionViewCell *cell = ASDynamicCast(node.view.superview.superview, UICollectionViewCell);
-  ASDisplayNodeAssertNotNil(cell, @"Expected cell node to be hosted in a cell!");
-  ASCollectionView *collectionView = collectionNode.view;
-  NSIndexPath *indexPath = [collectionView indexPathForNode:node];
-  if (cell && indexPath) {
-    [self.delegate collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
-  }
-}
-
-- (void)collectionNode:(ASCollectionNode *)collectionNode didEndDisplayingItemWithNode:(ASCellNode *)node
-{
-  UICollectionViewCell *cell = ASDynamicCast(node.view.superview.superview, UICollectionViewCell);
-  ASDisplayNodeAssertNotNil(cell, @"Expected cell node to be hosted in a cell!");
-  ASCollectionView *collectionView = collectionNode.view;
-  NSIndexPath *indexPath = [collectionView indexPathForNode:node];
-  if (cell && indexPath) {
-    [self.delegate collectionView:collectionView didEndDisplayingCell:cell forItemAtIndexPath:indexPath];
-  }
-}
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
   [self.delegate scrollViewDidScroll:scrollView];
@@ -133,6 +111,23 @@ typedef struct {
   if ([ASIGListAdapterBasedDataSource overridesForSectionControllerClass:ctrl.class].beginBatchFetchWithContext) {
     [ctrl beginBatchFetchWithContext:context];
   }
+}
+
+/**
+ * Note: It is not documented that ASCollectionNode will forward these UIKit delegate calls if they are implemented.
+ * It is not considered harmful to do so, and adding them to documentation will confuse most users, who should
+ * instead using the ASCollectionDelegate callbacks.
+ */
+#pragma mark - ASCollectionDelegateInterop
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  [self.delegate collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  [self.delegate collectionView:collectionView didEndDisplayingCell:cell forItemAtIndexPath:indexPath];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout
@@ -199,6 +194,17 @@ typedef struct {
   return [[self supplementaryElementSourceForSection:indexPath.section] nodeForSupplementaryElementOfKind:kind atIndex:indexPath.item];
 }
 
+#pragma mark - ASCollectionDataSourceInterop
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+  return [self.dataSource collectionView:collectionView cellForItemAtIndexPath:indexPath];
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+  return [self.dataSource collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
+}
 
 #pragma mark - Helpers
 

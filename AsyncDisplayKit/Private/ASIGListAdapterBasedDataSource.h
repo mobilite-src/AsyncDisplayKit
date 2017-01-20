@@ -10,9 +10,10 @@
 
 #import <IGListKit/IGListKit.h>
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
+#import "ASCollectionInteropProtocols.h"
 
 AS_SUBCLASSING_RESTRICTED
-@interface ASIGListAdapterBasedDataSource : NSObject <ASCollectionDataSource, ASCollectionDelegate>
+@interface ASIGListAdapterBasedDataSource : NSObject <ASCollectionDataSourceInterop, ASCollectionDelegateInterop>
 
 - (instancetype)initWithListAdapter:(IGListAdapter *)listAdapter;
 
