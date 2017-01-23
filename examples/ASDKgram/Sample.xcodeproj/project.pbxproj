@@ -35,6 +35,7 @@
 		CC5369AC1E15925200FAD348 /* PhotoFeedSectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC5369AB1E15925200FAD348 /* PhotoFeedSectionController.m */; };
 		CC5532171E15CC1E0011C01F /* ASCollectionSectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC5532161E15CC1E0011C01F /* ASCollectionSectionController.m */; };
 		CC6350BB1E1C482D002BC613 /* TailLoadingNode.m in Sources */ = {isa = PBXBuildFile; fileRef = CC6350BA1E1C482D002BC613 /* TailLoadingNode.m */; };
+		CC85250F1E36B392008EABE6 /* FeedHeaderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85250E1E36B392008EABE6 /* FeedHeaderNode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,6 +94,8 @@
 		CC5532161E15CC1E0011C01F /* ASCollectionSectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASCollectionSectionController.m; sourceTree = "<group>"; };
 		CC6350B91E1C482D002BC613 /* TailLoadingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TailLoadingNode.h; sourceTree = "<group>"; };
 		CC6350BA1E1C482D002BC613 /* TailLoadingNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TailLoadingNode.m; sourceTree = "<group>"; };
+		CC85250D1E36B392008EABE6 /* FeedHeaderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedHeaderNode.h; sourceTree = "<group>"; };
+		CC85250E1E36B392008EABE6 /* FeedHeaderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedHeaderNode.m; sourceTree = "<group>"; };
 		D09B5DF0BFB37583DE8F3142 /* Pods-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sample.release.xcconfig"; path = "Pods/Target Support Files/Pods-Sample/Pods-Sample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -253,6 +256,8 @@
 		767A5F1A1CAA3DBF004CDA8D /* ASDK */ = {
 			isa = PBXGroup;
 			children = (
+				CC85250D1E36B392008EABE6 /* FeedHeaderNode.h */,
+				CC85250E1E36B392008EABE6 /* FeedHeaderNode.m */,
 				CC6350B91E1C482D002BC613 /* TailLoadingNode.h */,
 				CC6350BA1E1C482D002BC613 /* TailLoadingNode.m */,
 				7688435B1CAA37EF00D8629E /* PhotoCellNode.h */,
@@ -414,6 +419,7 @@
 				768843811CAA37EF00D8629E /* CommentFeedModel.m in Sources */,
 				7688438E1CAA37EF00D8629E /* PhotoFeedNodeController.m in Sources */,
 				CC6350BB1E1C482D002BC613 /* TailLoadingNode.m in Sources */,
+				CC85250F1E36B392008EABE6 /* FeedHeaderNode.m in Sources */,
 				768843841CAA37EF00D8629E /* CommentView.m in Sources */,
 				768843881CAA37EF00D8629E /* LocationModel.m in Sources */,
 				768843901CAA37EF00D8629E /* PhotoModel.m in Sources */,

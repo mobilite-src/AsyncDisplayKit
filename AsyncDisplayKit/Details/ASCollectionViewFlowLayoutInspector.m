@@ -117,16 +117,14 @@
 - (CGSize)sizeForSupplementaryViewOfKind:(NSString *)kind inSection:(NSUInteger)section collectionView:(ASCollectionView *)collectionView
 {
   if (ASObjectIsEqual(kind, UICollectionElementKindSectionHeader)) {
-    id<UICollectionViewDelegateFlowLayout> del = self.layoutDelegate;
-    if (del) {
-      return [del collectionView:collectionView layout:_layout referenceSizeForHeaderInSection:section];
+    if (_delegateFlags.implementsReferenceSizeForHeader) {
+      return [[self delegateForCollectionView:collectionView] collectionView:collectionView layout:_layout referenceSizeForHeaderInSection:section];
     } else {
       return [self.layout headerReferenceSize];
     }
   } else if (ASObjectIsEqual(kind, UICollectionElementKindSectionFooter)) {
-    id<UICollectionViewDelegateFlowLayout> del = self.layoutDelegate;
-    if (del) {
-      return [del collectionView:collectionView layout:_layout referenceSizeForFooterInSection:section];
+    if (_delegateFlags.implementsReferenceSizeForFooter) {
+      return [[self delegateForCollectionView:collectionView] collectionView:collectionView layout:_layout referenceSizeForFooterInSection:section];
     } else {
       return [self.layout footerReferenceSize];
     }

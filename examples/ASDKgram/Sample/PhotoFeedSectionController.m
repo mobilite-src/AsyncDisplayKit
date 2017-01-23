@@ -11,8 +11,9 @@
 #import "PhotoModel.h"
 #import "PhotoCellNode.h"
 #import "TailLoadingNode.h"
+#import "FeedHeaderNode.h"
 
-@interface PhotoFeedSectionController ()
+@interface PhotoFeedSectionController () <ASSupplementaryNodeSource, IGListSupplementaryViewSource>
 @property (nonatomic, strong) NSString *paginatingSpinner;
 @end
 
@@ -22,15 +23,29 @@
 {
   if (self = [super init]) {
     _paginatingSpinner = @"Paginating Spinner";
+    self.supplementaryViewSource = self;
   }
   return self;
 }
+
+#pragma mark - IGListSectionType
 
 - (void)didUpdateToObject:(id)object
 {
   _photoFeed = object;
   [self setItems:_photoFeed.photos animated:NO completion:nil];
 }
+
+
+ASIGSectionControllerSizeForItemImplementation;
+ASIGSectionControllerCellForIndexImplementation;
+
+- (void)didSelectItemAtIndex:(NSInteger)index
+{
+  // nop
+}
+
+#pragma mark - ASSectionController
 
 - (ASCellNodeBlock)nodeBlockForItemAtIndex:(NSInteger)index
 {
@@ -68,10 +83,7 @@
   } numResultsToReturn:20];
 }
 
-- (void)didSelectItemAtIndex:(NSInteger)index
-{
-  // nop
-}
+#pragma mark - RefreshingSectionControllerType
 
 - (void)refreshContentWithCompletion:(void(^)())completion
 {
@@ -80,7 +92,23 @@
   } numResultsToReturn:4];
 }
 
-ASIGSectionControllerSizeForItemImplementation;
-ASIGSectionControllerCellForIndexImplementation;
+#pragma mark - ASSupplementaryNodeSource
+
+- (ASCellNode *)nodeForSupplementaryElementOfKind:(NSString *)elementKind atIndex:(NSInteger)index
+{
+  // pointer compare is fine here
+  ASDisplayNodeAssert(elementKind == UICollectionElementKindSectionHeader, nil);
+  return [[FeedHeaderNode alloc] init];
+}
+
+#pragma mark - IGListSupplementaryViewSource
+
+- (NSArray<NSString *> *)supportedElementKinds
+{
+  return @[ ];// UICollectionElementKindSectionHeader ];
+}
+
+ASIGSupplementarySourceViewForSupplementaryElementImplementation(self);
+ASIGSupplementarySourceSizeForSupplementaryElementImplementation;
 
 @end

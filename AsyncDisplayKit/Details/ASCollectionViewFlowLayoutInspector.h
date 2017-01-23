@@ -22,8 +22,6 @@ AS_SUBCLASSING_RESTRICTED
 
 @property (nonatomic, weak, readonly) UICollectionViewFlowLayout *layout;
 
-@property (nonatomic, weak) id<UICollectionViewDelegateFlowLayout> layoutDelegate;
-
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithCollectionView:(ASCollectionView *)collectionView flowLayout:(UICollectionViewFlowLayout *)flowLayout NS_DESIGNATED_INITIALIZER;
 
