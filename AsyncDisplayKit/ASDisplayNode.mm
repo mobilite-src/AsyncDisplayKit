@@ -2997,11 +2997,11 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
   ASDN::MutexLocker l(__instanceLock__);
   
   ASDisplayNodeLogEvent(self, @"didLoad");
+  [self didLoad];
   for (ASDisplayNodeDidLoadBlock block in _onDidLoadBlocks) {
     block(self);
   }
   _onDidLoadBlocks = nil;
-  [self didLoad];
 }
 
 - (void)didLoad

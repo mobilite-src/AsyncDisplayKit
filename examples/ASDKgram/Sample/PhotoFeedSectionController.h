@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PhotoFeedSectionController : ASCollectionSectionController <ASIGListSectionType, RefreshingSectionControllerType>
+@interface PhotoFeedSectionController : ASCollectionSectionController <IGListSectionType, ASSectionController, RefreshingSectionControllerType>
 
 @property (nonatomic, strong, nullable) PhotoFeedModel *photoFeed;
 

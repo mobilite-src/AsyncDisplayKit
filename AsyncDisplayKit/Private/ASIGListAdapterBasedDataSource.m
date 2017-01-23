@@ -35,6 +35,16 @@ typedef struct {
 @property (nonatomic, weak, readonly) IGListAdapter *listAdapter;
 @property (nonatomic, readonly) id<UICollectionViewDelegateFlowLayout> delegate;
 @property (nonatomic, readonly) id<UICollectionViewDataSource> dataSource;
+
+/**
+ * The section controller that we will forward beginBatchFetchWithContext: to.
+ * Since shouldBatchFetch: is called on main, we capture the last section controller in there,
+ * and then we use it and clear it in beginBatchFetchWithContext: (on default queue).
+ *
+ * It is safe to use it without a lock in this limited way, since those two methods will
+ * never execute in parallel.6
+ */
+@property (nonatomic, weak) ASIGSectionController *sectionControllerForBatchFetching;
 @end
 
 @implementation ASIGListAdapterBasedDataSource
@@ -94,23 +104,18 @@ typedef struct {
   // If they implement shouldBatchFetch, call it. Otherwise, just say YES if they implement beginBatchFetch.
   ASIGSectionController *ctrl = [self sectionControllerForSection:sectionCount - 1];
   ASSectionControllerOverrides o = [ASIGListAdapterBasedDataSource overridesForSectionControllerClass:ctrl.class];
-  if (o.shouldBatchFetch) {
-    return [ctrl shouldBatchFetch];
-  } else {
-    return o.beginBatchFetchWithContext;
-  }
+	BOOL result = (o.shouldBatchFetch ? [ctrl shouldBatchFetch] : o.beginBatchFetchWithContext);
+	if (result) {
+		self.sectionControllerForBatchFetching = ctrl;
+	}
+	return result;
 }
 
 - (void)collectionNode:(ASCollectionNode *)collectionNode willBeginBatchFetchWithContext:(ASBatchContext *)context
 {
-  NSInteger sectionCount = [self numberOfSectionsInCollectionNode:collectionNode];
-  if (sectionCount == 0) {
-    return;
-  }
-  ASIGSectionController *ctrl = [self sectionControllerForSection:sectionCount - 1];
-  if ([ASIGListAdapterBasedDataSource overridesForSectionControllerClass:ctrl.class].beginBatchFetchWithContext) {
-    [ctrl beginBatchFetchWithContext:context];
-  }
+	ASIGSectionController *ctrl = self.sectionControllerForBatchFetching;
+	self.sectionControllerForBatchFetching = nil;
+	[ctrl beginBatchFetchWithContext:context];
 }
 
 /**

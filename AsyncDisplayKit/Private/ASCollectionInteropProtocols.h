@@ -11,9 +11,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * An extension of ASCollectionDataSource that allows the data source to provide
- * raw cells/supplementary views to AsyncDisplayKit.
+ * Protocols that allow the data source/delegate extra hooks,
+ * to facilitate interop e.g. with IGListKit.
  */
+
 @protocol ASCollectionDataSourceInterop <ASCollectionDataSource>
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;

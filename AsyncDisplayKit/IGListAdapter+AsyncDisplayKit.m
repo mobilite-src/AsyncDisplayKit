@@ -15,7 +15,7 @@
 
 @implementation IGListAdapter (AsyncDisplayKit)
 
-- (void)becomeDataSourceAndDelegateForCollectionNode:(ASCollectionNode *)collectionNode
+- (void)setASDKCollectionNode:(ASCollectionNode *)collectionNode
 {
   ASDisplayNodeAssertMainThread();
 

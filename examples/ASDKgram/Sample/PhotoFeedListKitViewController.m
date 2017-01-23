@@ -36,7 +36,7 @@
     IGListAdapterUpdater *updater = [[IGListAdapterUpdater alloc] init];
     _listAdapter = [[IGListAdapter alloc] initWithUpdater:updater viewController:self workingRangeSize:0];
     _listAdapter.dataSource = self;
-    self.collectionNode.listAdapter = _listAdapter;
+    [_listAdapter setASDKCollectionNode:self.collectionNode];
   }
   return self;
 }
