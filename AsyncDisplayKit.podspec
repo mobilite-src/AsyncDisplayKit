@@ -12,6 +12,7 @@ Pod::Spec.new do |spec|
   spec.frameworks = 'AssetsLibrary'
   spec.weak_frameworks = 'Photos','MapKit'
   spec.requires_arc = true
+  spec.dependency 'PINRemoteImage', '= 3.0.0-beta.3'
 
   spec.ios.deployment_target = '7.0'
 
